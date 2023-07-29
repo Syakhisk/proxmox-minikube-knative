@@ -70,7 +70,6 @@ sequenceDiagram
   participant bind as DNS Server <br> (BIND)
   participant rootCaddy as Root Reverse Proxy <br> (Caddy)
   participant lbCaddy as Load Balancer Reverse Proxy <br> (Caddy)
-  participant kube as Minikube
   participant svc as Web Service
 
   user ->> bind: Lookup <br> <instance-count>.standalone.hosts.pve
@@ -98,6 +97,7 @@ sequenceDiagram
   participant bind as DNS Server <br> (BIND)
   participant rootCaddy as Root Reverse Proxy <br> (Caddy)
   participant svlCaddy as Grogu Reverse Proxy <br> (Caddy)
+  participant kube as Minikube
   participant svc as Knative Service
 
   user ->> bind: Lookup <br> <service-name>.grogu.hosts.pve
