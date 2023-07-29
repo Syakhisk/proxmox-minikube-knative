@@ -7,7 +7,7 @@ This repository is a guide based on my final research project for my degree at I
 ## Terminologies
 
 - **Serverless System** - A system that uses Knative as the serverless platform, and the system is deployed on the Kubernetes cluster that is hosted on the Proxmox server.
-- **Conventional System (Standalone)** - A system that is deployed on the Proxmox server. The system will have 5 web servers and 1 load-balancer/reverse-proxy server.
+- **Conventional System (Standalone)** - A system that is deployed on the Proxmox server. The system will have 5 web services and 1 load-balancer/reverse-proxy server.
 
 ## Technology Used
 
@@ -41,6 +41,42 @@ This repository is a guide based on my final research project for my degree at I
 | ----------- | --- | ----- | -------- | --------- | ------ | -------- |
 | knative     | 6   | 8192M | grogu    | 10.0.0.10 | ubuntu | ubuntu   |
 
+### Networking
+
+#### Domain Mapping
+| Domain                           | Description                          |
+| -------------------------------- | ------------------------------------ |
+| \*.hosts.pve                     | Base Domain                          |
+| \*.standalone.hosts.pve          | Conventional System Base Domain      |
+| one.standalone.hosts.pve         | Conventional System with 1 Instance  |
+| two.standalone.hosts.pve         | Conventional System with 2 Instances |
+| three.standalone.hosts.pve       | Conventional System with 3 Instances |
+| four.standalone.hosts.pve        | Conventional System with 4 Instances |
+| five.standalone.hosts.pve        | Conventional System with 5 Instances |
+| \*.grogu.hosts.pve               | Serverless System Base Domain        |
+| \<service-name\>.grogu.hosts.pve | Knative Services Automatic Domain    |
+
+#### Request Flow of Serverless System
+
+```mermaid
+sequenceDiagram
+  participant user as User
+  participant bind as DNS Server <br> (BIND)
+  participant rootCaddy as Root Reverse Proxy <br> (Caddy)
+  participant svlCaddy as Grogu Reverse Proxy <br> (Caddy)
+  participant svc as Knative Service
+
+  user ->> bind: Lookup <br> <service-name>.grogu.hosts.pve
+  bind ->> user: Resolve Root Proxmox IP Address
+  Note right of user: Every request to <br> *.hosts.pve <br> will be resolved to <br> the Root Proxmox IP Address <br> and the request will be <br> forwarded to the Root <br> Reverse Proxy
+  user ->> rootCaddy: Request <br> <service-name>.grogu.hosts.pve
+  rootCaddy ->> svlCaddy: Request <br> <service-name>.grogu.hosts.pve
+  svlCaddy ->> svc: Request <br> <service-name>.grogu.hosts.pve
+  svc ->> svlCaddy: Response
+  svlCaddy ->> rootCaddy: Response
+  rootCaddy ->> user: Response
+
+```
 ## Guide
 
 ---
@@ -252,7 +288,7 @@ qm template 8000
 
 ### Create VM Instances
 
-1. Create a new Web Server VM Instance from the template
+1. Create a new Web Service VM Instance from the template
 
 To create a new VM from the template, you can use `qm clone` command. Use the `qm set` command to modify the VM configuration.
 
@@ -293,4 +329,4 @@ To check if the VM is created, you can use `qm list` command.
 qm list
 ```
 
-### Running the Web Server
+### Running the Web Service
