@@ -964,3 +964,5 @@ curl -Lk https://dashboard.grogu.hosts.pve
 
 ## References
 - [Original Repository](https://github.com/syakhisk/tugas-akhir)
+- [myits-login-script](https://github.com/syakhisk/myits-login-script)
+- [myits-vpn-download-script](https://github.com/Syakhisk/myits-vpn-download-script)
