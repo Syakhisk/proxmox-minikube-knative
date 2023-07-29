@@ -6,8 +6,11 @@ This repository is a guide based on my final research project for my degree at I
 
 ## Terminologies
 
-- **Serverless System** - A system that uses Knative as the serverless platform, and the system is deployed on the Kubernetes cluster that is hosted on the Proxmox server.
-- **Conventional System (Standalone)** - A system that is deployed on the Proxmox server. The system will have 5 web services and 1 load-balancer/reverse-proxy server.
+### **Serverless System**
+A system that uses Knative as the serverless platform, and the system is deployed on the Kubernetes cluster (Minikube) that is inside a single VM instance.
+
+### **Conventional System (Standalone)**
+A system that is deployed on the Proxmox server. The system will have 5 web services and 1 load-balancer/reverse-proxy server, each hosted on a single VM instance.
 
 ## Technology Used
 
@@ -112,9 +115,7 @@ sequenceDiagram
   rootCaddy ->> user: Response
 ```
 
-## Guide
-
----
+## Implementation Guide
 
 ## Proxmox
 
@@ -160,6 +161,31 @@ enp1s0 UP
 wlp5s0 DOWN
 vmbr0 UP 10.15.40.20/24 fe80::e654:e8ff:fe9b:ec21/64
 vmbr2 UP 10.0.0.1/24 fe80::5025:eeff:fecd:ab11/64
+```
+
+### Run the Root Reverse Proxy & DNS Server
+
+The root reverse proxy and DNS server is needed to route and resolve the request to the correct destination.
+
+To simplify the process, I used Docker Compose to run these services. The docker compose file is available [here](./networking/proxmox/docker-compose.yml).
+
+First we need to install Docker in the root proxmox node, to do that we can use the docker install script
+
+```bash
+curl -fsSL https://get.docker.com | sudo bash
+```
+
+Check the Docker installation using `docker run hello-world` command.
+
+```bash
+docker run hello-world
+```
+
+After Docker is installed, we can start the Docker Compose service.
+
+```bash
+cd networking/proxmox
+docker-compose up -d
 ```
 
 ## Conventional System
@@ -281,7 +307,7 @@ qm terminal 8000
 
 # or
 
-ssh ubuntu@10.0.0.35
+ssh ubuntu@10.0.0.30
 ```
 
 After accessing the VM, you can install the dependencies using the following commands.
@@ -365,3 +391,51 @@ qm list
 ```
 
 ### Running the Web Service
+
+The web service is a simple (naive) fibonacci calculator, you can check the source code [here](./web-service).
+
+Assuming you have this repository cloned in each instance, you can run the web service using these steps.
+
+Access each VM instance using `qm terminal` or SSH, I will use SSH in this step and will only show the commands for the first instance. You can repeat the steps below for the other instances.
+
+```bash
+ssh ubuntu@10.0.0.30
+# Go inside the web-service directory in this repository
+cd web-service
+
+# Build the Docker image using the Makefile
+make build
+```
+
+> A Docker image will be built with the tag `dev.local/fibonacci:1.0.0`
+
+To run a container, you can use the Docker Compose file (docker compose is used so that the container is automatically started between VM restarts). The docker compose file is available [here](./web-service/docker-compose.yml).
+
+```bash
+# inside the web-service directory
+docker-compose up -d
+```
+
+> The application inside the container will be started in port 3000, you can access the app using `curl localhost:3000` command.
+
+
+### Running the Load Balancer
+
+The load balancer is a reverse proxy server that will forward the request to the web service instances. We'll use Caddy as the reverse proxy server.
+
+Access the Load Balancer VM instance, I will use SSH in this step.
+
+```bash
+ssh ubuntu@10.0.0.35
+cd networking/load-balancer
+docker compose up -d
+```
+
+> To check if the load balancer is working, you can access the load balancer using `curl -H "Host: test.standalone.hosts.pve" localhost` command.
+
+## Serverless System
+
+### Create Base VM
+
+1. Access the Proxmox root shell using SSH or the web shell.
+
