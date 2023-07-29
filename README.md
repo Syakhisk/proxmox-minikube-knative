@@ -65,11 +65,12 @@ sequenceDiagram
   participant bind as DNS Server <br> (BIND)
   participant rootCaddy as Root Reverse Proxy <br> (Caddy)
   participant lbCaddy as Load Balancer Reverse Proxy <br> (Caddy)
+  participant kube as Minikube
   participant svc as Web Service
 
   user ->> bind: Lookup <br> <instance-count>.standalone.hosts.pve
   bind ->> user: Resolve Root Proxmox IP Address
-  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded by the Root Reverse Proxy
+  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded <br>by the Root Reverse Proxy
 
   user ->> rootCaddy: Request <br> <instance-count>.standalone.hosts.pve
 
@@ -96,7 +97,7 @@ sequenceDiagram
 
   user ->> bind: Lookup <br> <service-name>.grogu.hosts.pve
   bind ->> user: Resolve Root Proxmox IP Address
-  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded by the Root Reverse Proxy
+  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded <br>by the Root Reverse Proxy
 
   user ->> rootCaddy: Request <br> <service-name>.grogu.hosts.pve
 
