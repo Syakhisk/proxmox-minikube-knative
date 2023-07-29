@@ -21,6 +21,7 @@ This repository is a guide based on my final research project for my degree at I
 ## Architecture
 
 ### Conventional System
+
 ![Architecture](./assets/architecture-conventional.drawio.svg)
 
 | Description   | CPU | RAM   | Hostname | IP        | User   | Password |
@@ -32,28 +33,29 @@ This repository is a guide based on my final research project for my degree at I
 | web-server    | 1   | 512M  | kenobi-5 | 10.0.0.34 | ubuntu | ubuntu   |
 | load-balancer | 1   | 1024M | kenobi-6 | 10.0.0.35 | ubuntu | ubuntu   |
 
-
-
 ### Kubernetes Cluster and Knative
+
 ![Architecture](./assets/architecture-serverless.drawio.svg)
 
-| Description   | CPU | RAM   | Hostname | IP        | User   | Password |
-| ------------- | --- | ----- | -------- | --------- | ------ | -------- |
-| kubernetes    | 6   | 8192M  | grogu | 10.0.0.10 | ubuntu | ubuntu   |
+| Description | CPU | RAM   | Hostname | IP        | User   | Password |
+| ----------- | --- | ----- | -------- | --------- | ------ | -------- |
+| knative     | 6   | 8192M | grogu    | 10.0.0.10 | ubuntu | ubuntu   |
 
 ## Guide
 
-### Proxmox
+---
+
+## Proxmox
 
 Assumed that you have installed Proxmox on your machine or have access to a Proxmox server. If you haven't, you can follow the [official guide](https://pve.proxmox.com/wiki/Installation).
 
-#### Login to ITS Network (Optional, only if you are using ITS Network)
+### Login to ITS Network (Optional, only if you are using ITS Network)
 
 You can skip this step if you are not using ITS Network.
 
 I've created a script to make it easier to login to ITS Network. You can download the script from [syakhisk/myits-login-script](https://github.com/syakhisk/myits-login-script), you can make the script as a cron job to automatically login to ITS Network.
 
-#### Create a new internal network inside Proxmox
+### Create a new internal network inside Proxmox
 
 You can use the web interface or the CLI to create a new internal network. I'll use the CLI to create a new internal network.
 
@@ -89,9 +91,9 @@ vmbr0 UP 10.15.40.20/24 fe80::e654:e8ff:fe9b:ec21/64
 vmbr2 UP 10.0.0.1/24 fe80::5025:eeff:fecd:ab11/64
 ```
 
-### Conventional System
+## Conventional System
 
-#### Create Base VM
+### Create Base VM
 
 1. Access the Proxmox root shell using SSH or the web shell. So, most of the commands in this guide will be executed on the Proxmox root shell.
 
@@ -214,12 +216,14 @@ ssh ubuntu@10.0.0.35
 After accessing the VM, you can install the dependencies using the following commands.
 
 To install git, make, and curl, you can use the following commands.
+
 ```bash
 sudo apt update -y
 sudo apt install -y git make curl
 ```
 
 To install Docker, you can use the following commands.
+
 ```bash
 curl -fsSL https://get.docker.com | sudo bash
 
@@ -234,7 +238,7 @@ docker run hello-world
 
 You can also add more stuff to the VM and all of the changes will be there when you convert the VM to a template.
 
-#### Converting Base VM to Template
+### Converting Base VM to Template
 
 To convert the VM to a template, you can use `qm template` command. Make sure the VM is stopped before converting it to a template.
 
@@ -246,7 +250,8 @@ qm shutdown 8000
 qm template 8000
 ```
 
-#### Create VM Instances
+### Create VM Instances
+
 1. Create a new Web Server VM Instance from the template
 
 To create a new VM from the template, you can use `qm clone` command. Use the `qm set` command to modify the VM configuration.
