@@ -56,10 +56,38 @@ This repository is a guide based on my final research project for my degree at I
 | \*.grogu.hosts.pve               | Serverless System Base Domain        |
 | \<service-name\>.grogu.hosts.pve | Knative Services Automatic Domain    |
 
+#### Request Flow of Conventional System
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant user as User
+  participant bind as DNS Server <br> (BIND)
+  participant rootCaddy as Root Reverse Proxy <br> (Caddy)
+  participant lbCaddy as Load Balancer Reverse Proxy <br> (Caddy)
+  participant svc as Web Service
+
+  user ->> bind: Lookup <br> <instance-count>.standalone.hosts.pve
+  bind ->> user: Resolve Root Proxmox IP Address
+  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded by the Root Reverse Proxy
+
+  user ->> rootCaddy: Request <br> <instance-count>.standalone.hosts.pve
+
+  rootCaddy ->> lbCaddy: Request <br> <instance-count>.standalone.hosts.pve
+
+  lbCaddy ->> svc: Request <br> <instance-count>.standalone.hosts.pve
+  note over lbCaddy,svc: The load balancer will decide <br> which web service instance <br> will handle the request based on <br> the load balancer (leastConn) algorithm
+
+  svc ->> lbCaddy: Response
+  lbCaddy ->> rootCaddy: Response
+  rootCaddy ->> user: Response
+```
+
 #### Request Flow of Serverless System
 
 ```mermaid
 sequenceDiagram
+  autonumber
   participant user as User
   participant bind as DNS Server <br> (BIND)
   participant rootCaddy as Root Reverse Proxy <br> (Caddy)
@@ -68,15 +96,21 @@ sequenceDiagram
 
   user ->> bind: Lookup <br> <service-name>.grogu.hosts.pve
   bind ->> user: Resolve Root Proxmox IP Address
-  Note right of user: Every request to <br> *.hosts.pve <br> will be resolved to <br> the Root Proxmox IP Address <br> and the request will be <br> forwarded to the Root <br> Reverse Proxy
+  note over user,bind: Every request to *.hosts.pve will be resolved to <br> the Root Proxmox IP Address and then<br> the request will be forwarded by the Root Reverse Proxy
+
   user ->> rootCaddy: Request <br> <service-name>.grogu.hosts.pve
+
   rootCaddy ->> svlCaddy: Request <br> <service-name>.grogu.hosts.pve
-  svlCaddy ->> svc: Request <br> <service-name>.grogu.hosts.pve
+  note right of rootCaddy: Grogu reverse proxy <br> is needed here because each Knative service is <br> inside the Minikube internal network
+
+  svlCaddy ->> svc: Request <br> <service-name>.default.local.knative
+  note over svlCaddy,svc: The domain is converted <br> according to Kubernetes/Knative <br> internal load balancer config
+
   svc ->> svlCaddy: Response
   svlCaddy ->> rootCaddy: Response
   rootCaddy ->> user: Response
-
 ```
+
 ## Guide
 
 ---
