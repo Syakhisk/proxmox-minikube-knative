@@ -1,8 +1,8 @@
-# Proxmox Minikube Knative - Proof of Concept Serverless
+# Proxmox Minikube Knative - Serverless Proof of Concept
 
 This repository is a guide based on my final research project for my degree at Institut Teknologi Sepuluh Nopember. This guide will show you how to deploy [Knative](https://knative.dev/) on [Proxmox](https://www.proxmox.com/en/) using [Minikube](https://minikube.sigs.k8s.io/docs/). There will be also a guide to deploy a conventional system on the same Proxmox server.
 
-> This implementation is just a proof of concept, so it is not recommended to use this guide **AS IS** in production. Use other Kubernetes implementation such as [K3s](https://k3s.io/) or [MicroK8s](https://microk8s.io/) for production.
+> This implementation is just a proof of concept, so it is not recommended to use this guide **AS IS** in production. Use other Kubernetes implementation such as [K3s](https://k3s.io/) or [MicroK8s](https://microk8s.io/) for production instead of Minikube.
 
 Since there are some detailed images and charts you can access the Readme file directly so that the images and charts are rendered larger [here](./README.md)
 
