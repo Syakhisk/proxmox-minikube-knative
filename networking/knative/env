@@ -1,0 +1,6 @@
+# To load the env, run this:
+# $ source ./env
+
+export MINIKUBE_IP="$(minikube ip)"
+export KOURIER_PORT="$(kubectl -n kourier-system get service kourier -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')"
+export DASHBOARD_PORT="$(kubectl -n kubernetes-dashboard get service kubernetes-dashboard -o 'jsonpath={.spec.ports[?(@.port==80)].nodePort}')"

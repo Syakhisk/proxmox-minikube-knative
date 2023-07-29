@@ -286,3 +286,11 @@ qm set 805 --ipconfig0 ip=10.0.0.35/24,gw=10.0.0.1
 # Modify the VM RAM size
 qm set 805 --memory 1024
 ```
+
+To check if the VM is created, you can use `qm list` command.
+
+```bash
+qm list
+```
+
+### Running the Web Server

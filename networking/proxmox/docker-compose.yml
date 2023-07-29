@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  caddy:
+    container_name: caddy
+    image: caddy:2.6.4-alpine
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    restart: unless-stopped
+
+  bind9:
+    container_name: dns
+    image: ubuntu/bind9:9.16-20.04_beta
+    environment:
+      - BIND9_USER=root
+      - TZ=Asia/Jakarta
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - ./named.conf:/etc/bind/named.conf
+      - ./hosts-pve.zone:/etc/bind/hosts-pve.zone
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

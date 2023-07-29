@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  caddy:
+    container_name: caddy
+    image: caddy:2.6.4-alpine
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

@@ -1,0 +1,17 @@
+$TTL 2d
+
+$ORIGIN hosts.pve.
+
+@             IN     SOA    ns.hosts.pve. info.hosts.pve. (
+                            2022121900     ; serial
+                            12h            ; refresh
+                            15m            ; retry
+                            3w             ; expire
+                            2h )           ; minimum TTL
+
+              IN     NS     ns.hosts.pve.
+
+ns          IN     A      10.21.84.200
+*			IN     A      10.21.84.200
+
+; vim: tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab:

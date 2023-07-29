@@ -1,0 +1,28 @@
+test.grogu.hosts.pve:80 {
+	tls internal
+	respond "Hello, world!"
+}
+
+dashboard.grogu.hosts.pve:80 {
+	tls internal
+	reverse_proxy {$MINIKUBE_IP}:{$DASHBOARD_PORT}
+}
+
+*.grogu.hosts.pve:80 {
+	tls internal
+
+	reverse_proxy {$MINIKUBE_IP}:{$KOURIER_PORT} {
+		header_up Host {labels.3}.default.local.knative
+	}
+
+	log {
+		level DEBUG
+		output file /var/log/caddy/grogu.log {
+			roll_size 10mb
+			roll_keep 20
+			roll_keep_for 720h
+		}
+	}
+}
+
+# vim: tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab:

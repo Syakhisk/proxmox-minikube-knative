@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  web:
+    container_name: web
+    image: dev.local/fibonacci:1.0.0
+    ports:
+      - 3000:3000
+    restart: unless-stopped

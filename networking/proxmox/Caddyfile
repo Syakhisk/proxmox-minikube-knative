@@ -1,0 +1,19 @@
+### Testing
+test.hosts.pve {
+	tls internal
+	respond "Hello, world!"
+}
+
+### Serverless Nodes
+*.grogu.hosts.pve {
+	tls internal
+	reverse_proxy 10.0.0.10
+}
+
+### Standalone Nodes
+*.standalone.hosts.pve {
+	tls internal
+	reverse_proxy 10.0.0.35
+}
+
+# vim: ft=conf tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab:
