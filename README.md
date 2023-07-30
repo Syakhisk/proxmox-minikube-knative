@@ -479,7 +479,7 @@ USERNAME="ubuntu"
 PASSWORD="ubuntu"
 SSH_KEY="$HOME/.ssh/id_rsa.pub"
 
-MEMORY="4096"
+MEMORY="8192"
 CORES="6"
 
 qm create "$VM_ID" \
